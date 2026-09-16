@@ -1,2 +1,216 @@
-# document-template-studio-with-angular-docx-editor
-Create, upload, display, and edit document templates using the Syncfusion® Angular DOCX Editor.
+# Documents Template Studio
+
+## Introduction
+
+Documents Template Studio is a Angular functional sample that provides a
+centralized workspace for creating, managing, and editing DOCX document
+templates using the Syncfusion<sup style="font-size:70%">&reg;</sup> [Angular DOCX Editor](https://www.syncfusion.com/docx-editor-sdk/angular-docx-editor) (Document Editor).
+
+The sample is designed for where organizations need reusable templates for donor
+communications, receipts, reminders, and impact letters.
+
+Users can:
+
+-   View available document templates from a dashboard.
+-   Open a template in the Syncfusion Word-like Document Editor.
+-   View merge fields associated with the selected template.
+-   Insert merge fields into the document.
+-   Create a new blank template.
+-   Upload an existing DOCX template.
+-   Customize and save templates.
+-   Execute mail merge with a JSON data source and preview the merged document.
+-   Remove templates from the application.
+
+## Key Features
+
+### DOCX Template Editing
+
+Selecting a template opens it directly in the Syncfusion DOCX
+Editor.
+
+Users can customize the document using standard Word-like editing
+capabilities, including text formatting, tables, images, and other
+supported DOCX content.
+
+### Merge Fields
+
+The right-side merge-field panel displays the fields available for the
+selected template.
+
+Users can select a field to insert it into the document.
+
+The sample also supports adding custom merge fields either to the
+current template or to the common field catalog.
+
+### Create and Upload Templates
+
+Users can:
+
+-   Create a new blank template.
+-   Upload an existing `.docx` template.
+-   Provide template metadata such as name, category, and purpose.
+-   Open and customize uploaded templates in the editor.
+
+### Save and Publish
+
+The **Save and Publish** action saves the current document as a DOCX
+template through the ASP.NET Core server.
+
+The saved template is stored under:
+
+``` text
+Server-side/wwwroot/Templates/
+```
+
+### Mail Merge Preview
+
+The **Preview with Mail Merge** action sends the current DOCX content
+and JSON merge data to the server.
+
+The ASP.NET Core server uses Syncfusion Word Library (DocIO) to execute the mail merge and generate a DOCX document for display in the Syncfusion DOCX Editor.
+
+## Prerequisites
+
+### Client
+
+-   Node.js
+-   npm
+
+### Server
+
+-   .NET 10 SDK
+-   ASP.NET Core runtime
+-   Syncfusion ASP.NET Core and DocIO packages referenced by the project
+
+## How to Run
+The sample consists of two applications:
+
+- **ASP.NET Core Web API** – provides the server-side APIs required by the Syncfusion Document Editor.
+- **Angular application** – provides the client-side application.
+
+Start the ASP.NET Core Web API server first because the Angular application uses the server for
+DOCX import, save, and Mail Merge operations.
+
+### 1. Start the ASP.NET Core Server
+
+Open a terminal in:
+
+``` text
+Server-side/
+```
+
+Run:
+
+``` bash
+dotnet restore
+dotnet run
+```
+
+The configured development URL is:
+
+``` text
+http://localhost:5212
+```
+
+The Document Editor service URL used by the Angular application is:
+
+``` text
+http://localhost:5212/api/documenteditor/
+```
+Keep this terminal running while using the Angular application.
+
+### 2. Configure the Web API Base URL
+
+Before installing the Angular dependencies or starting the Angular application, open:
+
+```text
+src/app/data/sample-templates.ts
+```
+
+Locate the following configuration:
+
+```javascript
+export const DOCUMENT_EDITOR_BASE_URL = 'http://localhost:5212';
+```
+
+Update `DOCUMENT_EDITOR_BASE_URL` to match the URL where your ASP.NET Core Web API is running.
+
+For example:
+
+```javascript
+export const DOCUMENT_EDITOR_BASE_URL = 'http://localhost:5212';
+```
+
+### 3. Start the Angular Application
+
+Open another terminal in:
+
+``` text
+Client-side/
+```
+
+Install dependencies:
+
+``` bash
+npm install
+```
+
+Start the development server:
+
+``` bash
+ng serve
+```
+
+Open the URL shown by Vite in the terminal, normally:
+
+``` text
+http://localhost:5173
+```
+
+
+## Mail Merge Data
+
+The sample uses a JSON string for Mail Merge data.
+
+For example, a Pledge Payment Reminder template can use:
+
+``` json
+{
+  "Organization": [
+    {
+      "OrgName": "ABC Foundation",
+      "OrgAddress": "123 Main Street, New York, NY 10001",
+      "ReminderDate": "August 20, 2026",
+      "DonorName": "Nancy",
+      "DonorAddress": "45 Oak Street, New York, NY 10002",
+      "PledgeNumber": "PLG-2026-0042",
+      "PledgeDate": "July 15, 2026",
+      "PledgeAmount": "$2,500.00",
+      "AmountPaid": "$1,500.00",
+      "OutstandingAmount": "$1,000.00",
+      "DueDate": "September 15, 2026",
+      "PaymentMethod": "Online Payment",
+      "ContactEmail": "donations@abcfoundation.org",
+      "ContactPhone": "+1-212-555-0123"
+    }
+  ]
+}
+```
+
+## Server API
+
+The main Document Editor endpoints used by the sample are:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /api/documenteditor/Import` | Imports a DOCX and converts it to SFDT. |
+| `POST /api/documenteditor/Save` | Saves the edited SFDT content as a DOCX template. |
+| `POST /api/documenteditor/MailMerge` | Executes Mail Merge using the supplied JSON data and returns SFDT. |
+
+## Resources
+
+- **Product page:**   [Syncfusion® Angular DOCX Editor](https://www.syncfusion.com/docx-editor-sdk/angular-docx-editor) 
+
+- **Documentation:**   [Syncfusion® Angular DOCX Editor - Documentation](https://help.syncfusion.com/document-processing/word/word-processor/angular/getting-started) 
+
+- **Online demo:**   [Syncfusion® Angular DOCX Editor - Online demo](https://document.syncfusion.com/demos/docx-editor/angular/#/tailwind3/document-editor/default) 

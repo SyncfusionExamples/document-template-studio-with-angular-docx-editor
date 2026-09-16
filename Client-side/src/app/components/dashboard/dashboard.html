@@ -1,0 +1,90 @@
+<section class="ts-dashboard">
+  <header class="ts-dashboard-head">
+    <h2>Template Studio</h2>
+    <p>Create, manage, and edit your document templates in one place.</p>
+  </header>
+
+  <div class="ts-thumb-grid">
+    <button
+      type="button"
+      class="ts-thumb ts-thumb-new"
+      (click)="add.emit()"
+      aria-label="Create a new template"
+    >
+      <span class="ts-thumb-new-icon" aria-hidden="true">+</span>
+      <span class="ts-thumb-name">New Template</span>
+      <span class="ts-thumb-type">Blank document</span>
+    </button>
+
+    <button
+      type="button"
+      class="ts-thumb ts-thumb-upload"
+      (click)="upload.emit()"
+      [disabled]="isUploading"
+      aria-label="Upload a .docx template"
+    >
+      <span class="ts-thumb-new-icon" aria-hidden="true">
+        {{ isUploading ? '⟳' : '⬆' }}
+      </span>
+      <span class="ts-thumb-name">
+        {{ isUploading ? 'Uploading…' : 'Upload Template' }}
+      </span>
+      <span class="ts-thumb-type">Import existing template</span>
+    </button>
+
+    @for (t of templates; track t.id) {
+      <div
+        class="ts-thumb"
+        role="button"
+        tabindex="0"
+        [attr.aria-label]="'Open ' + t.name"
+        [attr.title]="t.name"
+        [attr.style]="'--ts-thumb-color: ' + (colors[t.type] ?? '#5c3eb1')"
+        (click)="open.emit(t.id)"
+        (keydown)="onCardKey($event, t.id)"
+      >
+        <span
+          class="ts-thumb-delete-wrap"
+          (click)="$event.stopPropagation()"
+        >
+          <button
+            type="button"
+            class="ts-thumb-delete-flat"
+            [attr.aria-label]="'Remove ' + t.name"
+            [attr.title]="'Remove ' + t.name"
+            (click)="onDelete($event, t.id)"
+          >
+            ✕
+          </button>
+        </span>
+
+        @if (t.thumbnailUrl) {
+          <span class="ts-thumb-art ts-thumb-art-image">
+            <img [src]="t.thumbnailUrl" alt="" />
+          </span>
+        } @else {
+          <span class="ts-thumb-art ts-thumb-art-placeholder">
+            <span class="ts-thumb-placeholder-doc" aria-hidden="true">
+              <span class="ts-thumb-placeholder-line"></span>
+              <span class="ts-thumb-placeholder-line"></span>
+              <span class="ts-thumb-placeholder-line"></span>
+              <span class="ts-thumb-placeholder-line"></span>
+            </span>
+          </span>
+        }
+
+        <span class="ts-thumb-name" [attr.title]="t.name">{{ t.name }}</span>
+        <span class="ts-thumb-type">
+          <span
+            class="ts-type-dot"
+            [style.background]="colors[t.type] ?? '#5c3eb1'"
+          ></span>
+          {{ t.type }}
+        </span>
+        <span class="ts-thumb-desc" [attr.title]="t.description">
+          {{ t.description }}
+        </span>
+      </div>
+    }
+  </div>
+</section>

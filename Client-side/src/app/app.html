@@ -1,0 +1,314 @@
+<div class="ts-app" [class.is-dashboard]="!selected()">
+  <app-sidebar
+    [templates]="templates()"
+    [selectedId]="selectedId()"
+    [isUploading]="isUploading()"
+    (select)="onSelectTemplate($event)"
+    (add)="onAddTemplate()"
+    (upload)="onUploadClick()"
+    (delete)="onDeleteTemplate($event)"
+  ></app-sidebar>
+
+  <main class="ts-main">
+    @if (selected(); as t) {
+      <app-template-viewer
+        #viewer
+        [template]="t"
+        [initialUploadFile]="
+          pendingUpload()?.templateId === t.id
+            ? (pendingUpload()?.file ?? null)
+            : null
+        "
+        [commonFields]="commonFields()"
+        (back)="onBack()"
+        (initialUploadSaved)="onInitialUploadSaved($event)"
+        (initialUploadFailed)="onInitialUploadFailed($event)"
+        (thumbnailUpdated)="onThumbnailUpdated($event)"
+        (commonFieldAdded)="onCommonFieldAdded($event.key, $event.field)"
+        (templateFieldKeyAdded)="onTemplateFieldKeyAdded($event)"
+        (requestPublish)="onRequestPublish($event)"
+        (saved)="onSaved($event)"
+      ></app-template-viewer>
+    } @else {
+      <app-dashboard
+        [templates]="templates()"
+        [isUploading]="isUploading()"
+        (open)="onSelectTemplate($event)"
+        (add)="onAddTemplate()"
+        (upload)="onUploadClick()"
+        (delete)="onDeleteTemplate($event)"
+      ></app-dashboard>
+    }
+  </main>
+
+  <!-- Hidden file input used by the in-dialog Browse button. -->
+  <input
+    #uploadFileInput
+    type="file"
+    accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    (change)="onUploadFileChange($event)"
+    style="display: none"
+  />
+
+  <!-- Upload Template dialog (native HTML modal) -->
+  @if (uploadOpen()) {
+    <div
+      class="ts-preview-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ts-upload-title"
+      (click)="closeUpload()"
+    >
+      <div class="ts-preview-dialog" (click)="$event.stopPropagation()">
+        <header class="ts-preview-head">
+          <h3 id="ts-upload-title">Upload Template</h3>
+          <button
+            type="button"
+            class="ts-preview-close"
+            [disabled]="isUploading()"
+            aria-label="Close"
+            (click)="closeUpload()"
+          >×</button>
+        </header>
+        <div class="ts-preview-body">
+          <label class="ts-upload-label">Template file (.docx)</label>
+          <div class="ts-upload-file-row">
+            <span class="ts-upload-file-name" [attr.title]="uploadFile()?.name || ''">
+              {{ uploadFile()?.name || 'No file chosen' }}
+            </span>
+            <button
+              type="button"
+              class="e-btn e-outline"
+              (click)="triggerUploadFilePicker()"
+            >
+              <span class="e-icons e-folder-open" aria-hidden="true"></span>
+              Browse
+            </button>
+          </div>
+
+          <label class="ts-upload-label" for="ts-upload-name">Template name</label>
+          <input
+            id="ts-upload-name"
+            type="text"
+            class="ts-input"
+            placeholder="e.g. Annual Appeal Letter"
+            [value]="uploadName()"
+            (input)="uploadName.set(($any($event.target)).value)"
+          />
+
+          <label class="ts-upload-label" for="ts-upload-category">Category</label>
+          <input
+            id="ts-upload-category"
+            type="text"
+            class="ts-input"
+            list="ts-category-list"
+            placeholder="Select or type a new category"
+            [value]="uploadCategory()"
+            (input)="uploadCategory.set(($any($event.target)).value)"
+          />
+          <datalist id="ts-category-list">
+            @for (c of existingCategories(); track c) {
+              <option [value]="c"></option>
+            }
+          </datalist>
+
+          <label class="ts-upload-label" for="ts-upload-purpose">Purpose</label>
+          <input
+            id="ts-upload-purpose"
+            type="text"
+            class="ts-input"
+            placeholder="Very short description shown on the card"
+            [value]="uploadPurpose()"
+            (input)="uploadPurpose.set(($any($event.target)).value)"
+          />
+
+          @if (uploadError()) {
+            <p class="ts-preview-error">{{ uploadError() }}</p>
+          }
+        </div>
+        <footer class="ts-preview-actions">
+          <button type="button" class="e-btn e-flat" (click)="closeUpload()">
+            Cancel
+          </button>
+          <button type="button" class="e-btn e-primary" (click)="confirmUpload()">
+            Upload
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Delete confirmation dialog (native HTML modal) -->
+  @if (deleteOpen()) {
+    <div
+      class="ts-preview-overlay"
+      role="dialog"
+      aria-modal="true"
+      (click)="closeDelete()"
+    >
+      <div class="ts-preview-dialog" (click)="$event.stopPropagation()" style="max-width: 420px;">
+        <header class="ts-preview-head">
+          <h3>Remove template?</h3>
+          <button
+            type="button"
+            class="ts-preview-close"
+            aria-label="Close"
+            (click)="closeDelete()"
+          >×</button>
+        </header>
+        <div class="ts-preview-body">
+          <p class="ts-dialog-text">
+            @if (deleteTarget(); as dt) {
+              "{{ dt.name }}" will be removed from the studio.
+            }
+          </p>
+        </div>
+        <footer class="ts-preview-actions">
+          <button type="button" class="e-btn e-flat" (click)="closeDelete()">
+            Cancel
+          </button>
+          <button
+            type="button"
+            class="e-btn e-danger e-primary"
+            (click)="confirmDelete()"
+          >
+            Delete
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Publish dialog -->
+  @if (publishOpen() && publishTarget(); as pt) {
+    <div
+      class="ts-preview-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ts-publish-title"
+      (click)="closePublish()"
+    >
+      <div class="ts-preview-dialog" (click)="$event.stopPropagation()">
+        <header class="ts-preview-head">
+          <h3 id="ts-publish-title">Save and Publish</h3>
+          <button
+            type="button"
+            class="ts-preview-close"
+            [disabled]="publishSubmitting()"
+            aria-label="Close"
+            (click)="closePublish()"
+          >×</button>
+        </header>
+        <div class="ts-preview-body">
+          <label class="ts-upload-label">Template file (.docx)</label>
+          <div class="ts-upload-file-row">
+            <span
+              class="ts-upload-file-name"
+              title="The .docx is the current editor content"
+            >
+              From current document ( {{ pt.name || 'untitled' }} )
+            </span>
+          </div>
+
+          <label class="ts-upload-label" for="ts-publish-name">Template name</label>
+          <input
+            id="ts-publish-name"
+            type="text"
+            class="ts-input"
+            placeholder="e.g. Annual Appeal Letter"
+            [value]="publishName()"
+            [disabled]="publishSubmitting()"
+            (input)="publishName.set(($any($event.target)).value)"
+          />
+
+          <label class="ts-upload-label" for="ts-publish-category">Category</label>
+          <input
+            id="ts-publish-category"
+            type="text"
+            class="ts-input"
+            list="ts-publish-category-list"
+            placeholder="Select or type a new category"
+            [value]="publishCategory()"
+            [disabled]="publishSubmitting()"
+            (input)="publishCategory.set(($any($event.target)).value)"
+          />
+          <datalist id="ts-publish-category-list">
+            @for (c of existingCategories(); track c) {
+              <option [value]="c"></option>
+            }
+          </datalist>
+
+          <label class="ts-upload-label" for="ts-publish-purpose">Purpose</label>
+          <input
+            id="ts-publish-purpose"
+            type="text"
+            class="ts-input"
+            placeholder="Very short description shown on the card"
+            [value]="publishPurpose()"
+            [disabled]="publishSubmitting()"
+            (input)="publishPurpose.set(($any($event.target)).value)"
+          />
+
+          @if (publishError()) {
+            <p class="ts-dialog-text ts-publish-error">{{ publishError() }}</p>
+          }
+        </div>
+        <footer class="ts-preview-actions">
+          <button
+            type="button"
+            class="e-btn e-flat"
+            [disabled]="publishSubmitting()"
+            (click)="closePublish()"
+          >Cancel</button>
+          <button
+            type="button"
+            class="e-btn e-primary"
+            [disabled]="publishSubmitting()"
+            (click)="confirmPublish()"
+          >
+            {{ publishSubmitting() ? 'Publishing…' : 'Publish' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- "Template published" / "Template saved" confirmation dialog -->
+  @if (confirmationOpen()) {
+    <div
+      class="ts-preview-overlay"
+      role="dialog"
+      aria-modal="true"
+      (click)="closeConfirmation()"
+    >
+      <div class="ts-preview-dialog" (click)="$event.stopPropagation()" style="max-width: 360px;">
+        <header class="ts-preview-head">
+          <h3>{{ confirmationMode() === 'save' ? 'Template saved' : 'Template published' }}</h3>
+          <button
+            type="button"
+            class="ts-preview-close"
+            aria-label="Close"
+            (click)="closeConfirmation()"
+          >×</button>
+        </header>
+        <div class="ts-preview-body">
+          <p class="ts-dialog-text">
+            @if (confirmationName()) {
+              "{{ confirmationName() }}" has been {{ confirmationMode() === 'save' ? 'saved' : 'published' }}.
+            } @else {
+              The template has been {{ confirmationMode() === 'save' ? 'saved' : 'published' }}.
+            }
+          </p>
+        </div>
+        <footer class="ts-preview-actions">
+          <button type="button" class="e-btn e-flat" (click)="closeConfirmation()">Stay</button>
+          <button
+            type="button"
+            class="e-btn e-primary"
+            (click)="confirmationGoBack()"
+          >Back to dashboard</button>
+        </footer>
+      </div>
+    </div>
+  }
+</div>

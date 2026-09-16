@@ -1,0 +1,90 @@
+/* Merge fields panel-specific overrides for native HTML controls. The
+   component inherits the global panel styling from styles.css. */
+.ts-fields-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+button.ts-field-chip {
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 7px 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 6px;
+  cursor: pointer;
+  height: auto;
+  transition: border-color 0.12s, background 0.12s;
+  font: inherit;
+  color: inherit;
+}
+button.ts-field-chip:hover {
+  border-color: #3d5afe;
+  background: #f5f7ff;
+}
+
+button.ts-btn-add-field {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #3d5afe;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  font: inherit;
+  font-weight: 500;
+  height: 32px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button.ts-btn-add-field:hover {
+  background: #3043e0;
+}
+button.ts-btn-add-field:disabled {
+  background: #c7d0ff;
+  border-color: #c7d0ff;
+  cursor: not-allowed;
+}
+
+button.ts-btn-flat {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: #1f2330;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+}
+button.ts-btn-flat:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+button.ts-btn-primary-action {
+  background: #3d5afe;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+}
+button.ts-btn-primary-action:hover {
+  background: #3043e0;
+}
+button.ts-btn-primary-action:disabled {
+  background: #c7d0ff;
+  border-color: #c7d0ff;
+  cursor: not-allowed;
+}

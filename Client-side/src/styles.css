@@ -1,0 +1,925 @@
+/* =====================================================================
+   Template Studio — Global styles
+   Port of Client-side/src/App.css + Client-side/src/index.css.
+   ===================================================================== */
+
+/* Syncfusion theme imports. The Angular wrapper packages do not re-export
+   the tailwind3 CSS themselves — the CSS lives in the underlying
+   `ej2-*` packages, so we import from there. */
+
+@import "../node_modules/@syncfusion/ej2-tailwind3-theme/styles/document-editor/index.css";
+@import "../node_modules/@syncfusion/ej2-tailwind3-theme/styles/document-editor-container/index.css";
+
+:root {
+  --text: #6b6375;
+  --text-h: #08060d;
+  --bg: #fff;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 14px/1.4 var(--sans);
+  color: #1f2330;
+  background: #ffffff;
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #1f2330;
+}
+
+#root, app-root {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0;
+}
+h1 { font-size: 32px; margin: 0 0 8px; }
+h2 { font-size: 18px; margin: 0 0 6px; }
+h3 { font-size: 14px; margin: 0 0 6px; }
+h4 { font-size: 12px; margin: 0 0 4px; }
+p  { margin: 0 0 8px; }
+
+/* =====================================================================
+   Two-column app shell (sidebar + main)
+   ===================================================================== */
+.ts-app {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: #f4f5f8;
+  color: #1f2330;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+#app, .ts-app {
+  min-height: 0;
+}
+.ts-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+/* The Angular custom element wrappers (e.g. <app-template-viewer>) default
+   to `display: inline-block` which collapses to their content height. Make
+   them block-level and inherit the flex/grid context so `height: 100%` on
+   children works as expected. */
+app-template-viewer,
+app-dashboard,
+app-sidebar,
+app-merge-fields-panel {
+  display: block !important;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* ---------- Sidebar ---------- */
+.ts-sidebar {
+  background: #ffffff;
+  border-right: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.ts-sidebar-head {
+  padding: 14px 14px 12px;
+  border-bottom: 1px solid #eef0f3;
+}
+.ts-sidebar-head h2 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2330;
+}
+.ts-sidebar-search {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  color: #1f2330;
+  background: #ffffff;
+  border: 1px solid #c9ced6;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ts-sidebar-search::placeholder { color: #6b7280; }
+.ts-sidebar-search:hover { border-color: #9aa1ad; }
+.ts-sidebar-search:focus {
+  border-color: #3d5afe;
+  box-shadow: 0 0 0 2px rgba(61, 90, 254, 0.15);
+}
+.ts-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 6px;
+}
+.ts-tree-group { margin-bottom: 10px; }
+.ts-tree-group-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+}
+.ts-tree-group-head .ts-type-dot { width: 7px; height: 7px; }
+.ts-tree-group-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ts-tree-group-count {
+  background: #f1f2f6;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 8px;
+  min-width: 18px;
+  text-align: center;
+}
+.ts-tree-group-list { list-style: none; margin: 0; padding: 0; }
+.ts-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 2px;
+  transition: background 0.12s;
+}
+.ts-tree-row:hover { background: #f3f4f6; }
+.ts-tree-row.is-selected { background: #eef0ff; }
+.ts-tree-row.is-selected .ts-tree-name { color: #3d5afe; }
+.ts-file-icon { font-size: 16px; line-height: 1; }
+.ts-tree-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1f2330;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ts-tree-delete {
+  background: transparent;
+  border: 0;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 2px 4px;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 4px;
+}
+.ts-tree-delete:hover { background: #f3f4f6; color: #ef4444; }
+
+/* ---------- Shared bits kept for non-sidebar UI ---------- */
+.ts-type-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.ts-empty {
+  padding: 16px 12px;
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* =====================================================================
+   Viewer
+   ===================================================================== */
+.ts-viewer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #f4f5f8;
+  position: relative;
+  overflow: hidden;
+}
+.ts-viewer-head {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.ts-viewer-body {
+  flex: 1 1 0;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  grid-template-rows: 1fr;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.ts-viewer-canvas {
+  min-height: 0;
+}
+.ts-viewer-canvas {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+.ts-viewer-title h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2330;
+}
+.ts-viewer-title p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #6b7280;
+}
+.ts-viewer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ts-viewer-canvas--drag-over {
+  outline: 2px dashed #3d5afe;
+  outline-offset: -6px;
+  background-color: rgba(61, 90, 254, 0.05);
+}
+
+/* Lock the canvas to a stretched-flex child and force the
+   Syncfusion document editor wrapper (Angular `ejs-documenteditorcontainer`
+   which carries the `e-documenteditorcontainer` part of the class
+   attribute) to fill it vertically. Without these rules the inner
+   element renders at its content height (often tens of thousands of
+   pixels), pushing the rest of the app off-screen. */
+.ts-viewer-canvas {
+  min-height: 0;
+}
+.ts-viewer-canvas > .e-document-editor,
+.ts-viewer-canvas > .e-documenteditorcontainer,
+.ts-viewer-canvas > ejs-documenteditorcontainer,
+.ts-viewer-canvas > #ts-document-editor {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  position: relative;
+}
+
+/* Constrain all descendants of the Syncfusion container so the
+   internal "ribbon toolbar + scrollable content" model stays inside
+   the canvas column. */
+.ts-viewer-canvas .e-documenteditorcontainer,
+.ts-viewer-canvas .e-documenteditorcontainer * {
+  max-width: 100%;
+}
+
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-ribbon,
+.ts-viewer-canvas .e-documenteditorcontainer .e-ribbon,
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-toolbar-wrapper,
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-toolbar {
+  flex-shrink: 0;
+  height: auto !important;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-container-vertical,
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-container-horizontal,
+.ts-viewer-canvas .e-documenteditorcontainer .e-de-ctnr-content,
+.ts-viewer-canvas .e-documenteditorcontainer .e-jvml-doccontainer-div,
+.ts-viewer-canvas .e-documenteditorcontainer > div {
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: auto;
+}
+
+/* =====================================================================
+   Dashboard
+   ===================================================================== */
+.ts-dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f4f5f8;
+  overflow: auto;
+}
+.ts-dashboard-head { padding: 24px 32px 8px; }
+.ts-dashboard-head h2 {
+  margin: 0 0 4px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2330;
+}
+.ts-dashboard-head p { margin: 0; font-size: 13px; color: #6b7280; }
+.ts-thumb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  padding: 16px 32px 32px;
+}
+.ts-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  border-top: 4px solid var(--ts-thumb-color, #5c3eb1);
+  cursor: pointer;
+  text-align: left;
+  transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+  font-family: inherit;
+  color: inherit;
+  position: relative;
+}
+.ts-thumb:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+.ts-thumb-delete-wrap { position: absolute; top: 8px; right: 8px; z-index: 3; }
+.ts-thumb-new {
+  align-items: center;
+  justify-content: center;
+  border-top-color: #6b7280;
+  border-style: dashed;
+  background: #fafbfc;
+  min-height: 220px;
+}
+.ts-thumb-upload {
+  align-items: center;
+  justify-content: center;
+  border-top-color: #3d5afe;
+  border-style: dashed;
+  background: #f5f7ff;
+  min-height: 220px;
+}
+.ts-thumb-upload:disabled { cursor: progress; opacity: 0.7; }
+.ts-thumb-new-icon {
+  font-size: 38px;
+  font-weight: 300;
+  color: #6b7280;
+  line-height: 1;
+}
+.ts-thumb-art {
+  width: 100%;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+.ts-thumb-art-image { padding: 0; }
+.ts-thumb-art-image img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 168px;
+  max-height: 188px;
+  object-fit: contain;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin: 0 auto;
+}
+.ts-thumb-art-placeholder { padding: 4px 0; display: flex; justify-content: center; }
+.ts-thumb-placeholder-doc {
+  width: 96px;
+  height: 120px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  background: #ffffff;
+  padding: 14px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.ts-thumb-placeholder-line {
+  height: 6px;
+  border-radius: 2px;
+  background: #e5e7eb;
+}
+.ts-thumb-placeholder-line:nth-child(1) { width: 70%; background: var(--ts-thumb-color, #5c3eb1); opacity: 0.6; }
+.ts-thumb-placeholder-line:nth-child(2) { width: 100%; }
+.ts-thumb-placeholder-line:nth-child(3) { width: 90%; }
+.ts-thumb-placeholder-line:nth-child(4) { width: 60%; }
+.ts-thumb-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2330;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ts-thumb-type {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #6b7280;
+}
+.ts-thumb-desc {
+  font-size: 11px;
+  color: #9ca3af;
+  line-height: 1.4;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =====================================================================
+   Upload dialog (native modal)
+   ===================================================================== */
+.ts-upload-form { padding: 16px; display: flex; flex-direction: column; }
+.ts-upload-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2330;
+  margin-top: 14px;
+  margin-bottom: 6px;
+  display: block;
+}
+.ts-upload-label:first-child { margin-top: 0; }
+.ts-upload-file-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+.ts-upload-file-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: #1f2330;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ts-upload-input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 10px;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  background: #ffffff;
+  font: 14px 'Segoe UI', system-ui, sans-serif;
+  color: #1f2330;
+}
+.ts-upload-input:focus {
+  outline: none;
+  border-color: #3d5afe;
+  box-shadow: 0 0 0 2px rgba(61, 90, 254, 0.15);
+}
+.ts-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 4px;
+}
+.ts-dialog-text {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #374151;
+}
+.ts-publish-error {
+  color: #b91c1c;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 8px 0 4px;
+}
+
+/* =====================================================================
+   Generic Syncfusion button helpers (used by simple <button class="e-btn ..." />)
+   ===================================================================== */
+button.e-btn {
+  font-family: inherit;
+}
+button.e-btn.e-flat {
+  background: transparent;
+  color: #1f2330;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  height: 30px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+button.e-btn.e-flat:hover { background: #f5f7ff; }
+button.e-btn.e-outline {
+  background: transparent;
+  color: #3d5afe;
+  border: 1px solid #3d5afe;
+  border-radius: 6px;
+  height: 30px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+button.e-btn.e-outline:hover { background: #f5f7ff; }
+button.e-btn.e-primary {
+  background: #3d5afe;
+  color: #ffffff;
+  border: 1px solid #3d5afe;
+  border-radius: 6px;
+  height: 30px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+button.e-btn.e-primary:hover { background: #3043e0; }
+button.e-btn.e-primary:disabled { background: #c7d0ff; border-color: #c7d0ff; cursor: not-allowed; }
+button.e-btn.e-danger.e-primary { background: #d6336c; border-color: #d6336c; }
+button.e-btn.e-danger.e-primary:hover { background: #b91c4f; }
+button.e-btn.e-info.e-flat {
+  background: transparent;
+  color: #1971c2;
+  border: 1px solid #c7d0ff;
+}
+button.e-btn.e-info.e-flat:hover { background: #f0f9ff; }
+
+/* Reusable .ts-input class used by native HTML inputs. */
+input.ts-input {
+  width: 100%;
+  height: 32px;
+  padding: 4px 10px;
+  border: 1px solid #c8c8c8;
+  border-radius: 4px;
+  background: #ffffff;
+  font: 14px 'Segoe UI', system-ui, sans-serif;
+  color: #1f2330;
+  box-sizing: border-box;
+  outline: none;
+}
+input.ts-input:focus {
+  outline: none;
+  border-color: #3d5afe;
+  box-shadow: 0 0 0 2px rgba(61, 90, 254, 0.15);
+}
+
+/* =====================================================================
+   Preview / dialog overlays (native HTML modal pattern)
+   ===================================================================== */
+.ts-preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 18, 28, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1100;
+  padding: 28px 12px;
+  overflow-y: auto;
+}
+.ts-preview-dialog {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 56px);
+}
+.ts-preview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eef0f3;
+}
+.ts-preview-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2330;
+}
+.ts-preview-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ts-preview-close:hover { background: #f3f4f6; color: #1f2330; }
+.ts-preview-close:disabled { cursor: not-allowed; opacity: 0.5; }
+
+.ts-preview-body {
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ts-preview-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ts-preview-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.ts-preview-browse {
+  flex-shrink: 0;
+}
+.ts-preview-file-name {
+  flex: 1 1 200px;
+  min-width: 0;
+  font-size: 12px;
+  color: #1f2330;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  padding: 6px 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ts-preview-error {
+  margin: 0;
+  padding: 6px 8px;
+  background: #fdecec;
+  color: #b42318;
+  border: 1px solid #f5b8c4;
+  border-radius: 5px;
+  font-size: 12px;
+}
+.ts-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px 14px;
+  border-top: 1px solid #eef0f3;
+}
+.ts-preview-example {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 10px 10px;
+  background: #fafbfc;
+  font-size: 12px;
+}
+.ts-preview-example summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #3d5afe;
+  padding: 2px 0 4px;
+  outline: none;
+}
+.ts-preview-example summary:hover { text-decoration: underline; }
+.ts-preview-example pre {
+  margin: 6px 0 0;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #1f2330;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* =====================================================================
+   Merge Fields panel
+   ===================================================================== */
+.ts-fields-panel {
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+.ts-fields-head {
+  padding: 16px;
+  border-bottom: 1px solid #eef0f3;
+}
+.ts-fields-head h3 { margin: 0; font-size: 14px; font-weight: 600; color: #1f2330; }
+.ts-fields-subtitle { margin: 2px 0 0; font-size: 12px; color: #6b7280; }
+.ts-fields-hint {
+  padding: 8px 16px;
+  margin: 0;
+  font-size: 11px;
+  color: #9ca3af;
+  border-bottom: 1px solid #f3f4f6;
+  background: #fafbfc;
+}
+.ts-fields-groups {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ts-field-chip-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1f2330;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ts-field-chip-li {
+  list-style: none;
+  margin-bottom: 6px;
+  cursor: grab;
+}
+.ts-field-chip-li:active { cursor: grabbing; }
+
+.ts-fields-foot {
+  border-top: 1px solid #eef0f3;
+  padding: 10px 12px 12px;
+  background: #fafbfc;
+  flex-shrink: 0;
+}
+.ts-fields-hint-foot {
+  margin: 0 0 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #6b7280;
+}
+
+/* =====================================================================
+   Drag ghost
+   ===================================================================== */
+.ts-drag-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #3d5afe;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(61, 90, 254, 0.35);
+  white-space: nowrap;
+  pointer-events: none;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+.ts-drag-ghost-label { display: inline-block; line-height: 1; }
+
+/* =====================================================================
+   Add Field dialog (nested inside the merge fields panel)
+   ===================================================================== */
+.ts-add-field-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 18, 28, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px 12px;
+  overflow-y: auto;
+}
+.ts-add-field-dialog {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 48px);
+}
+.ts-add-field-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eef0f3;
+}
+.ts-add-field-head h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f2330;
+}
+.ts-add-field-close {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.ts-add-field-close:hover { background: #f3f4f6; color: #1f2330; }
+
+.ts-add-field-form {
+  padding: 14px 16px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ts-add-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ts-add-field-scope {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin: 0 0 4px;
+  background: #fafbfc;
+}
+.ts-add-field-scope legend {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6b7280;
+  padding: 0 4px;
+}
+.ts-radio {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 4px 0;
+  cursor: pointer;
+  font-size: 12px;
+}
+.ts-radio input[type="radio"] { margin-top: 2px; accent-color: #3d5afe; }
+.ts-radio strong { font-weight: 600; }
+.ts-radio em { font-style: normal; color: #6b7280; font-size: 11px; }
+.ts-radio input[type="radio"]:disabled + span { opacity: 0.5; }
+
+.ts-hint {
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: none;
+  letter-spacing: 0;
+}
