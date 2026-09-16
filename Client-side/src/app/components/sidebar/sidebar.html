@@ -1,0 +1,54 @@
+<aside class="ts-sidebar">
+  <header class="ts-sidebar-head">
+    <h2>Template Studio</h2>
+    <input
+      type="search"
+      class="ts-sidebar-search"
+      placeholder="Search templates"
+      #searchBox
+      (input)="onSearchInput(searchBox.value)"
+      aria-label="Search templates"
+    />
+  </header>
+  <nav class="ts-tree" aria-label="Templates list">
+    @if (groups().length === 0) {
+      <p class="ts-empty">No templates yet.</p>
+    } @else {
+      @for (g of groups(); track g.key) {
+        <section class="ts-tree-group">
+          <header class="ts-tree-group-head">
+            <span
+              class="ts-type-dot"
+              [style.background]="g.color"
+              aria-hidden="true"
+            ></span>
+            <span class="ts-tree-group-label">{{ g.label }}</span>
+            <span class="ts-tree-group-count">{{ g.items.length }}</span>
+          </header>
+          <ul class="ts-tree-group-list">
+            @for (t of g.items; track t.id) {
+              <li
+                class="ts-tree-row"
+                [class.is-selected]="t.id === selectedId()"
+                role="button"
+                tabindex="0"
+                [attr.aria-pressed]="t.id === selectedId()"
+                (click)="onRowClick(t.id)"
+                (keydown)="onRowKey($event, t.id)"
+              >
+                <span class="ts-file-icon" aria-hidden="true">📄</span>
+                <span class="ts-tree-name">{{ t.name }}</span>
+                <button
+                  type="button"
+                  class="ts-tree-delete"
+                  aria-label="Remove template"
+                  (click)="onDelete($event, t.id)"
+                >×</button>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    }
+  </nav>
+</aside>

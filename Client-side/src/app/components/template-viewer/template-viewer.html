@@ -1,0 +1,152 @@
+<section class="ts-viewer" *ngIf="template">
+  <header class="ts-viewer-head">
+    <div class="ts-viewer-title">
+      <button type="button" class="ts-back-flat" (click)="back.emit()" aria-label="Back to dashboard">
+        ‹ Dashboard
+      </button>
+      <h2>{{ template.name }}</h2>
+      <p>{{ template.description }}</p>
+    </div>
+    <div class="ts-viewer-actions">
+      <button
+        type="button"
+        class="e-btn e-info e-flat ts-btn-flat"
+        [disabled]="isMerging()"
+        title="Preview the template with Mail Merge JSON data."
+        (click)="onPreviewClick()"
+      >
+        <span class="e-icons e-eye" aria-hidden="true"></span>
+        {{ isMerging() ? 'Merging…' : 'Preview with Data' }}
+      </button>
+      <button
+        type="button"
+        class="e-btn e-outline e-primary ts-btn-flat"
+        [disabled]="isSaving() || !dirty()"
+        title="Save and publish the template."
+        (click)="onSave()"
+      >
+        <span class="e-icons e-save" aria-hidden="true"></span>
+        {{ isSaving() ? 'Saving…' : 'Save and Publish' }}
+      </button>
+      <button
+        type="button"
+        class="e-btn e-primary e-flat ts-btn-flat"
+        [disabled]="isDownloading()"
+        title="Download the document content."
+        (click)="onDownload()"
+      >
+        <span class="e-icons e-download" aria-hidden="true"></span>
+        {{ isDownloading() ? 'Preparing…' : 'Download' }}
+      </button>
+    </div>
+  </header>
+
+  <div class="ts-viewer-body">
+    <div
+      class="ts-viewer-canvas"
+      [class.ts-viewer-canvas--drag-over]="isDragOver()"
+      (dragenter)="onCanvasDragEnter($event)"
+      (dragover)="onCanvasDragOver($event)"
+      (dragleave)="onCanvasDragLeave($event)"
+      (drop)="onCanvasDrop($event)"
+    >
+      <ejs-documenteditorcontainer
+        #editor
+        [id]="'ts-document-editor'"
+        [serviceUrl]="DOCUMENT_EDITOR_SERVICE_URL"
+        [enableToolbar]="true"
+        [toolbarMode]="'Ribbon'"
+        [showPropertiesPane]="false"
+        [restrictEditing]="false"
+        [height]="'100%'"
+        [width]="'100%'"
+        style="height: 100%; min-height: 0; width: 100%; overflow: hidden; flex: 1 1 auto;"
+        (created)="onEditorCreated()"
+        (contentChange)="onContentChange()"
+      ></ejs-documenteditorcontainer>
+    </div>
+
+    <app-merge-fields-panel
+      [template]="template"
+      [customFieldMap]="combinedCustomFields()"
+      [commonFieldsProp]="commonFields"
+      [documentMergeFields]="documentMergeFields()"
+      (insertField)="onInsertField($event)"
+      (customFieldAdded)="onCustomFieldAdded($event)"
+    ></app-merge-fields-panel>
+  </div>
+
+  @if (previewOpen()) {
+    <div
+      class="ts-preview-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ts-preview-title"
+      (click)="onPreviewClose()"
+    >
+      <div class="ts-preview-dialog" (click)="$event.stopPropagation()">
+        <header class="ts-preview-head">
+          <h3 id="ts-preview-title">Preview with Data</h3>
+          <button
+            type="button"
+            class="ts-preview-close"
+            aria-label="Close"
+            [disabled]="isMerging()"
+            (click)="onPreviewClose()"
+          >×</button>
+        </header>
+
+        <div class="ts-preview-body">
+          <div class="ts-preview-file-row">
+            <input
+              #previewFileInput
+              type="file"
+              accept=".json,application/json"
+              class="ts-preview-file-input"
+              [disabled]="isMerging()"
+              (change)="onPreviewFileChange($event)"
+            />
+            <button
+              type="button"
+              class="e-btn e-outline e-primary ts-preview-browse"
+              [disabled]="isMerging()"
+              (click)="onPreviewBrowseClick()"
+            >
+              <span class="e-icons e-folder" aria-hidden="true"></span>
+              Browse…
+            </button>
+            <span class="ts-preview-file-name">
+              {{ previewFileName() || 'No file chosen' }}
+            </span>
+          </div>
+
+          <details class="ts-preview-example">
+            <summary>Show example JSON format</summary>
+            <pre>{{ PREVIEW_EXAMPLE_JSON }}</pre>
+          </details>
+
+          @if (previewError()) {
+            <p class="ts-preview-error">{{ previewError() }}</p>
+          }
+        </div>
+
+        <footer class="ts-preview-actions">
+          <button
+            type="button"
+            class="e-btn e-flat"
+            [disabled]="isMerging()"
+            (click)="onPreviewClose()"
+          >Cancel</button>
+          <button
+            type="button"
+            class="e-btn e-primary"
+            [disabled]="isMerging() || !previewInternalFile()"
+            (click)="onPreviewOk()"
+          >
+            {{ isMerging() ? 'Merging…' : 'OK' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+</section>

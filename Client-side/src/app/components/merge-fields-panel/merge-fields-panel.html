@@ -1,0 +1,167 @@
+<aside class="ts-fields-panel">
+  <header class="ts-fields-head">
+    <h3>Merge Fields</h3>
+    @if (template) {
+      <p class="ts-fields-subtitle">
+        For <strong>{{ template.name }}</strong>
+      </p>
+    } @else {
+      <p class="ts-fields-subtitle">Select a template to view fields</p>
+    }
+  </header>
+
+  @if (!template) {
+    <p class="ts-empty">
+      Merge fields will appear here when a template is opened.
+    </p>
+  }
+
+  @if (template) {
+    <p class="ts-fields-hint">
+      Click a field to insert at the caret, or drag it into the document.
+    </p>
+  }
+
+  @if (template) {
+    <div class="ts-fields-groups">
+      <ul class="ts-fields-list">
+        @for (f of fields(); track f.key) {
+          <li
+            class="ts-field-chip-li"
+            draggable="true"
+            (dragstart)="handleChipDragStart($event, f.key)"
+            (dragend)="handleChipDragEnd($event)"
+          >
+            <button
+              type="button"
+              class="ts-field-chip"
+              [attr.title]="'Insert ' + f.key + ' — drag to drop into document'"
+              (click)="insertField.emit(f.key)"
+            >
+              <span class="ts-field-chip-label">{{ f.key }}</span>
+            </button>
+          </li>
+        }
+        @if (fields().length === 0) {
+          <p class="ts-empty">
+            No merge fields yet. Use the <strong>Add Field</strong> button below to add one.
+          </p>
+        }
+      </ul>
+    </div>
+  }
+
+  <footer class="ts-fields-foot">
+    <p class="ts-fields-hint-foot">
+      Need a new field? Add a custom one — saved into this template or globally for all templates.
+    </p>
+    <button
+      type="button"
+      class="ts-btn-add-field"
+      [disabled]="!template"
+      (click)="openAdd()"
+    >
+      + Add Field
+    </button>
+  </footer>
+
+  @if (showAdd()) {
+    <div
+      class="ts-add-field-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ts-add-field-title"
+      (click)="handleOverlayClick($event)"
+    >
+      <div class="ts-add-field-dialog" (click)="$event.stopPropagation()">
+        <header class="ts-add-field-head">
+          <h3 id="ts-add-field-title">Add Merge Field</h3>
+          <button
+            type="button"
+            class="ts-add-field-close"
+            aria-label="Close"
+            [disabled]="saving()"
+            (click)="closeAdd()"
+          >
+            ×
+          </button>
+        </header>
+
+        <form class="ts-add-field-form" (submit)="handleSubmit($event)">
+          <fieldset class="ts-add-field-scope">
+            <legend>Save to</legend>
+            <label class="ts-radio">
+              <input
+                type="radio"
+                name="ts-add-scope"
+                value="template"
+                [checked]="scope() === 'template'"
+                [disabled]="!template || saving()"
+                (change)="onScopeChange('template')"
+              />
+              <span>
+                <strong>This template</strong>
+                <em>{{ template ? (' — ' + template.name) : ' (no template open)' }}</em>
+              </span>
+            </label>
+            <label class="ts-radio">
+              <input
+                type="radio"
+                name="ts-add-scope"
+                value="common"
+                [checked]="scope() === 'common'"
+                [disabled]="saving()"
+                (change)="onScopeChange('common')"
+              />
+              <span>
+                <strong>Common (all templates)</strong>
+                <em> — added to the global field catalog</em>
+              </span>
+            </label>
+          </fieldset>
+
+          <label class="ts-add-field-label" for="ts-af-key">
+            Field Name
+            <input
+              #keyInput
+              id="ts-af-key"
+              type="text"
+              class="ts-input"
+              placeholder="e.g. DonorEmail"
+              pattern="^[A-Za-z][A-Za-z0-9]*$"
+              required
+              [value]="key()"
+              [disabled]="saving()"
+              (input)="onKeyChange(($any($event.target)).value)"
+            />
+            <small class="ts-hint">
+              CamelCase, letters/digits only, leading letter.
+            </small>
+          </label>
+
+          @if (error()) {
+            <p class="ts-add-field-error">{{ error() }}</p>
+          }
+
+          <footer class="ts-add-field-actions">
+            <button
+              type="button"
+              class="ts-btn-flat"
+              [disabled]="saving()"
+              (click)="closeAdd()"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="ts-btn-primary-action"
+              [disabled]="saving()"
+            >
+              {{ saving() ? 'Saving…' : 'Add Field' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+</aside>

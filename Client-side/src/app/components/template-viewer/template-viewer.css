@@ -1,0 +1,72 @@
+/* Template-viewer-specific custom buttons mirroring the React build. */
+
+button.ts-back-flat {
+  margin-bottom: 4px;
+  padding: 0 8px;
+  background: transparent;
+  color: #3d5afe;
+  font-size: 12px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+}
+button.ts-back-flat:hover {
+  text-decoration: underline;
+}
+
+.ts-btn-flat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border: 1px solid #c8c8c8;
+  background: #ffffff;
+  color: #1f2330;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.ts-btn-flat:hover {
+  border-color: #3d5afe;
+}
+.ts-btn-flat:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Syncfusion colour themes are reproduced via cssClass hooks on the
+   original React buttons. In Angular we additionally rely on .e-info,
+   .e-primary helpers that the host styles provide. */
+
+button.e-btn.e-flat {
+  font-weight: 500;
+}
+button.e-btn.e-info.e-flat {
+  border-color: #5dade2;
+  color: #5dade2;
+}
+button.e-btn.e-info.e-flat:hover {
+  background: #f0f9ff;
+}
+button.e-btn.e-primary {
+  background: #3d5afe;
+  color: #ffffff;
+  border-color: #3d5afe;
+}
+button.e-btn.e-primary:hover {
+  background: #3043e0;
+}
+button.e-btn.e-outline.e-primary {
+  background: transparent;
+  color: #3d5afe;
+  border-color: #3d5afe;
+}
+button.e-btn.e-outline.e-primary:hover {
+  background: #f5f7ff;
+}
+
+/* The "Preview with Data" browse button inside the dialog reuses the
+   same `.ts-preview-browse` Syncfusion class hook behaviour. */
